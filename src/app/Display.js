@@ -12,11 +12,15 @@ import {
   Download,
   Printer,
 } from "lucide-react";
+import ClaimTable from "./ClaimTable";
 
 const HealthInsuranceSlides = (data) => {
   const [claimdata, setClaimdata] = useState(null);
+  const [policyData, setPolicydata] = useState(null);
   useEffect(() => {
     console.log("new data", data);
+    console.log(" policy data", data.policyData);
+    setPolicydata(data.policyData);
     setClaimdata(data.data);
   }, [data]);
 
@@ -43,11 +47,11 @@ const HealthInsuranceSlides = (data) => {
             <h2 className="text-2xl font-bold ml-4">
               Step 1 - Document Classification
             </h2>
-            <div className="ml-auto flex space-x-2">
+            {/* <div className="ml-auto flex space-x-2">
               <button className="flex items-center bg-blue-50 text-blue-700 px-3 py-1 rounded text-sm">
                 <FileCheck size={16} className="mr-1" /> Validate
               </button>
-            </div>
+            </div> */}
           </div>
 
           <div className="bg-gray-100 p-6 rounded-lg">
@@ -58,14 +62,14 @@ const HealthInsuranceSlides = (data) => {
                 ID: PAT-2025-02-7846 | Date Added: 15 Feb 2025
               </p> */}
               </div>
-              <div className="flex space-x-2">
+              {/* <div className="flex space-x-2">
                 <button className="bg-blue-600 text-white px-3 py-2 rounded text-sm flex items-center">
                   <Download size={14} className="mr-1" /> Download All
                 </button>
                 <button className="bg-gray-600 text-white px-3 py-2 rounded text-sm flex items-center">
                   <Printer size={14} className="mr-1" /> Print
                 </button>
-              </div>
+              </div> */}
             </div>
 
             <div className="grid grid-cols-3 gap-6 mt-8">
@@ -264,7 +268,9 @@ const HealthInsuranceSlides = (data) => {
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Treating Doctor Name::</span>
+                      <span className="text-gray-600">
+                        Treating Doctor Name::
+                      </span>
                       <span className="font-medium">
                         {claimdata["TreatingDoctorName"]}
                       </span>
@@ -293,36 +299,84 @@ const HealthInsuranceSlides = (data) => {
                         </td>
                       </tr>
                       <tr className="border-b border-gray-100">
-                        <td className="p-2">Expected cost of investigation + diagnostic</td>
-                        <td className="p-2 text-right">{claimdata['Expected cost of investigation + diagnostic']}</td>
+                        <td className="p-2">
+                          Expected cost of investigation + diagnostic
+                        </td>
+                        <td className="p-2 text-right">
+                          {
+                            claimdata[
+                              "Expected cost of investigation + diagnostic"
+                            ]
+                          }
+                        </td>
                       </tr>
                       <tr className="border-b border-gray-100">
                         <td className="p-2">ICU charges</td>
-                        <td className="p-2 text-right">{claimdata['ICU charges']}</td>
+                        <td className="p-2 text-right">
+                          {claimdata["ICU charges"]}
+                        </td>
                       </tr>
                       <tr className="border-b border-gray-100">
                         <td className="p-2">OT charges</td>
-                        <td className="p-2 text-right">{claimdata['OT charges']}</td>
+                        <td className="p-2 text-right">
+                          {claimdata["OT charges"]}
+                        </td>
                       </tr>
                       <tr className="border-b border-gray-100">
-                        <td className="p-2">Professional fes Surgeon + Anesthetist Fees + consultation Charges</td>
-                        <td className="p-2 text-right">{claimdata['Professional fes Surgeon + Anesthetist Fees + consultation Charges']}</td>
+                        <td className="p-2">
+                          Professional fes Surgeon + Anesthetist Fees +
+                          consultation Charges
+                        </td>
+                        <td className="p-2 text-right">
+                          {
+                            claimdata[
+                              "Professional fes Surgeon + Anesthetist Fees + consultation Charges"
+                            ]
+                          }
+                        </td>
                       </tr>
                       <tr className="border-b border-gray-100">
-                        <td className="p-2">Medicines + Consumables + Cost of Implants (if applicable please specify)</td>
-                        <td className="p-2 text-right">{claimdata['Medicines + Consumables + Cost of Implants (if applicable please specify)']}</td>
+                        <td className="p-2">
+                          Medicines + Consumables + Cost of Implants (if
+                          applicable please specify)
+                        </td>
+                        <td className="p-2 text-right">
+                          {
+                            claimdata[
+                              "Medicines + Consumables + Cost of Implants (if applicable please specify)"
+                            ]
+                          }
+                        </td>
                       </tr>
                       <tr className="border-b border-gray-100">
                         <td className="p-2">Other hospital expenses if any</td>
-                        <td className="p-2 text-right">{claimdata['Other hospital expenses if any']}</td>
+                        <td className="p-2 text-right">
+                          {claimdata["Other hospital expenses if any"]}
+                        </td>
                       </tr>
-
                       <tr className="border-b border-gray-100">
-                        <td className="p-2">All-inclusive package charges if any applicable</td>
-                        <td className="p-2 text-right">{claimdata['All-inclusive package charges if any applicable']}</td>
-                      </tr>                      <tr className="font-medium bg-gray-50">
-                        <td className="p-2">Sum Total expected cost of hospitalization</td>
-                        <td className="p-2 text-right">{claimdata['Sum Total expected cost of hospitalization']}</td>
+                        <td className="p-2">
+                          All-inclusive package charges if any applicable
+                        </td>
+                        <td className="p-2 text-right">
+                          {
+                            claimdata[
+                              "All-inclusive package charges if any applicable"
+                            ]
+                          }
+                        </td>
+                      </tr>{" "}
+                      <tr className="font-medium bg-gray-50">
+                        <td className="p-2">
+                          Sum Total expected cost of hospitalization
+                        </td>
+                        <td className="p-2 text-right">
+                          {
+                            claimdata[
+                              "Sum Total expected cost of hospitalization"
+                            ]
+                          }
+                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -340,15 +394,21 @@ const HealthInsuranceSlides = (data) => {
                   <div className="mb-4 pb-4 border-b border-dashed border-gray-200">
                     <div className="flex justify-between mb-2">
                       <span className="text-gray-600">Policy Number:</span>
-                      <span className="font-medium">FHPL-HI-45872</span>
+                      <span className="font-medium">
+                        {policyData.policyInformation["policyNumber"]}
+                      </span>
                     </div>
                     <div className="flex justify-between mb-2">
                       <span className="text-gray-600">Policy Type:</span>
-                      <span className="font-medium">Basic Health Coverage</span>
+                      <span className="font-medium">
+                        {policyData.policyInformation["policyType"]}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Coverage Limit:</span>
-                      <span className="font-medium">₹2,00,000 per annum</span>
+                      <span className="font-medium">
+                        {policyData.policyInformation["coverageLimit"]}
+                      </span>
                     </div>
                   </div>
 
@@ -361,9 +421,12 @@ const HealthInsuranceSlides = (data) => {
                           className="text-red-500 mr-2 mt-1 flex-shrink-0"
                         />
                         <span>
-                          Clause 4.2: Room rent capped at ₹2,000 per day for
-                          standard room. Super Deluxe or Premium rooms not
-                          covered.
+                          Room Rent Cap:{" "}
+                          {
+                            policyData.policyInformation.keyPolicyClauses[
+                              "Room Rent Cap"
+                            ]
+                          }
                         </span>
                       </li>
                       <li className="flex items-start">
@@ -372,8 +435,12 @@ const HealthInsuranceSlides = (data) => {
                           className="text-red-500 mr-2 mt-1 flex-shrink-0"
                         />
                         <span>
-                          Clause 7.3: Food, dietary supplements and personal
-                          care items not covered.
+                          Diet & Supplements:{" "}
+                          {
+                            policyData.policyInformation.keyPolicyClauses[
+                              "Diet & Supplements"
+                            ]
+                          }
                         </span>
                       </li>
                       <li className="flex items-start">
@@ -382,8 +449,12 @@ const HealthInsuranceSlides = (data) => {
                           className="text-green-500 mr-2 mt-1 flex-shrink-0"
                         />
                         <span>
-                          Clause 5.1: Medications and consumables covered up to
-                          100% of prescribed amount.
+                          Diagnostics:{" "}
+                          {
+                            policyData.policyInformation.keyPolicyClauses[
+                              "Diagnostics"
+                            ]
+                          }
                         </span>
                       </li>
                       <li className="flex items-start">
@@ -392,8 +463,12 @@ const HealthInsuranceSlides = (data) => {
                           className="text-green-500 mr-2 mt-1 flex-shrink-0"
                         />
                         <span>
-                          Clause 5.4: Diagnostic tests covered up to 100% of
-                          approved rates.
+                          Medications & Consumables:{" "}
+                          {
+                            policyData.policyInformation.keyPolicyClauses[
+                              "Medications & Consumables"
+                            ]
+                          }
                         </span>
                       </li>
                     </ul>
@@ -405,7 +480,10 @@ const HealthInsuranceSlides = (data) => {
                     </h4>
                     <p className="text-sm text-blue-700">
                       Based on policy terms, maximum claimable amount:{" "}
-                      <span className="font-bold">&lt; ₹2 lakhs</span>
+                      <span className="font-bold">
+                        &lt;{" "}
+                        {policyData.policyInformation["maximumClaimableAmount"]}
+                      </span>
                     </p>
                   </div>
                 </div>
@@ -446,93 +524,7 @@ const HealthInsuranceSlides = (data) => {
                 </span>
               </div>
 
-              <div className="p-4">
-                <div className="grid grid-cols-2 gap-6 mb-6">
-                  <div className="bg-gray-50 p-4 rounded border border-gray-200">
-                    <h4 className="font-medium text-gray-700 mb-2 flex items-center">
-                      <AlertCircle size={16} className="text-red-500 mr-2" />
-                      Room Upgrade Charges
-                    </h4>
-                    <div className="text-sm space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">
-                          Standard Room (Covered):
-                        </span>
-                        <span>₹2,000 × 3 nights = ₹6,000</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">
-                          Super Deluxe Room (Actual):
-                        </span>
-                        <span>₹6,667 × 3 nights = ₹20,000</span>
-                      </div>
-                      <div className="flex justify-between font-medium pt-1 border-t border-gray-200">
-                        <span>Excess Amount:</span>
-                        <span className="text-red-600">₹14,000</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-gray-50 p-4 rounded border border-gray-200">
-                    <h4 className="font-medium text-gray-700 mb-2 flex items-center">
-                      <AlertCircle size={16} className="text-red-500 mr-2" />
-                      Non-Medical Expenses
-                    </h4>
-                    <div className="text-sm space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Food Charges:</span>
-                        <span>₹1,000</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">
-                          Dietary Supplements:
-                        </span>
-                        <span>₹6,000</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">
-                          Personal Care Items:
-                        </span>
-                        <span>₹2,000</span>
-                      </div>
-                      <div className="flex justify-between font-medium pt-1 border-t border-gray-200">
-                        <span>Total Non-Medical:</span>
-                        <span className="text-red-600">₹9,000</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-red-50 p-4 rounded-lg border border-red-100">
-                  <h4 className="font-medium text-red-800 mb-2">
-                    Total Non-Claimable Charges
-                  </h4>
-                  <div className="flex items-center text-red-700">
-                    <div className="flex-1 grid grid-cols-2 gap-2 text-sm">
-                      <div className="flex justify-between px-2">
-                        <span>Room Upgrade:</span>
-                        <span className="font-medium">₹14,000</span>
-                      </div>
-                      <div className="flex justify-between px-2">
-                        <span>Food Charges:</span>
-                        <span className="font-medium">₹1,000</span>
-                      </div>
-                      <div className="flex justify-between px-2">
-                        <span>Supplements:</span>
-                        <span className="font-medium">₹6,000</span>
-                      </div>
-                      <div className="flex justify-between px-2">
-                        <span>Personal Items:</span>
-                        <span className="font-medium">₹2,000</span>
-                      </div>
-                    </div>
-                    <div className="ml-4 pl-4 border-l border-red-200">
-                      <div className="text-xl font-bold">₹27,000</div>
-                      <div className="text-xs">Not eligible for claim</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <ClaimTable claimData={policyData.claimInfo} />
             </div>
           </div>
         </div>
@@ -548,9 +540,9 @@ const HealthInsuranceSlides = (data) => {
               Step 4 - Summary and Reasoning
             </h2>
             <div className="ml-auto">
-              <button className="bg-blue-600 text-white px-3 py-1 rounded text-sm flex items-center">
+              {/* <button className="bg-blue-600 text-white px-3 py-1 rounded text-sm flex items-center">
                 <Printer size={14} className="mr-1" /> Print Report
-              </button>
+              </button> */}
             </div>
           </div>
 
@@ -558,9 +550,9 @@ const HealthInsuranceSlides = (data) => {
             <div className="bg-white border border-gray-200 rounded-lg shadow overflow-hidden max-w-4xl mx-auto">
               <div className="bg-blue-600 text-white p-3">
                 <h3 className="font-semibold">Claim Assessment Report</h3>
-                <p className="text-xs opacity-75">
+                {/* <p className="text-xs opacity-75">
                   Claim #CL-20250217-85462 | Generated on 17 Feb 2025, 10:42 AM
-                </p>
+                </p> */}
               </div>
 
               <div className="p-5">
@@ -573,24 +565,28 @@ const HealthInsuranceSlides = (data) => {
                       <div className="grid grid-cols-3 gap-2 mb-2">
                         <div>
                           <span className="text-gray-500 block">Name</span>
-                          <span className="font-medium">Raj Kumar Singh</span>
+                          <span className="font-medium">
+                            {claimdata["Patient Name (from Addhar)"]}
+                          </span>
                         </div>
                         <div>
                           <span className="text-gray-500 block">
                             Policy Number
                           </span>
-                          <span className="font-medium">FHPL-HI-45872</span>
+                          <span className="font-medium">
+                            {policyData.policyInformation.policyNumber}
+                          </span>
                         </div>
                         <div>
-                          <span className="text-gray-500 block">Member ID</span>
-                          <span className="font-medium">MEM-82746</span>
+                          {/* <span className="text-gray-500 block">Member ID</span>
+                          <span className="font-medium">MEM-82746</span> */}
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-2">
                         <div>
                           <span className="text-gray-500 block">Hospital</span>
                           <span className="font-medium">
-                            City Care Hospital
+                            {claimdata['HospitalName']}
                           </span>
                         </div>
                         <div>
@@ -598,7 +594,7 @@ const HealthInsuranceSlides = (data) => {
                             Admission Period
                           </span>
                           <span className="font-medium">
-                            10 Feb - 13 Feb 2025
+                          {claimdata['DateOfAdmission']} - {claimdata['DateOfDischarge']}
                           </span>
                         </div>
                       </div>
@@ -614,20 +610,20 @@ const HealthInsuranceSlides = (data) => {
                         <span className="text-gray-600">
                           Total Billed Amount:
                         </span>
-                        <span className="font-medium">₹63,700</span>
+                        <span className="font-medium">{policyData.claimInfo.totalClaimedAmount}</span>
                       </div>
                       <div className="flex justify-between mb-2 pb-2 border-b border-gray-200">
                         <span className="text-gray-600">
                           Non-Claimable Amount:
                         </span>
                         <span className="font-medium text-red-600">
-                          ₹27,000
+                        {policyData.claimInfo.totalDisallowedAmount}
                         </span>
                       </div>
                       <div className="flex justify-between mb-2 pb-2 border-b border-gray-200">
                         <span className="text-gray-600">Claimable Amount:</span>
                         <span className="font-medium text-green-600">
-                          ₹36,700
+                        {policyData.claimInfo.totalPayableAmount}
                         </span>
                       </div>
                       <div className="flex justify-between">
@@ -642,7 +638,7 @@ const HealthInsuranceSlides = (data) => {
                   </div>
                 </div>
 
-                <div className="mb-6">
+                {/* <div className="mb-6">
                   <h4 className="font-medium text-gray-800 mb-3">
                     Detailed Reasoning
                   </h4>
@@ -704,13 +700,13 @@ const HealthInsuranceSlides = (data) => {
                       </li>
                     </ul>
                   </div>
-                </div>
+                </div> */}
 
                 <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
                   <div className="flex items-center">
                     <CheckCircle size={20} className="text-green-500 mr-2" />
                     <span className="font-medium">
-                      Approved Amount: ₹36,700
+                      Approved Amount: {policyData.claimInfo.totalPayableAmount}
                     </span>
                   </div>
                   <div>
@@ -720,9 +716,9 @@ const HealthInsuranceSlides = (data) => {
                     </span>
                   </div>
                   <div>
-                    <button className="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm">
+                    {/* <button className="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm">
                       View Complete Policy
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               </div>

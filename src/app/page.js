@@ -17,11 +17,17 @@ import Searcelogo from "./logo-black.svg";
 import Image from "next/image";
 export default function PDFExtractor() {
   const [file, setFile] = useState(null);
+  const [policyFile, setPolicyFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [extractedData, setExtractedData] = useState(null);
+  const [extractedPolicyData, setExtractedPolicyData] = useState(null);
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
+  };
+
+  const handlePolicyFileChange = (event) => {
+    setPolicyFile(event.target.files[0]);
   };
   const fieldsToExtract = [
     "Patient Address 1",
@@ -104,7 +110,60 @@ export default function PDFExtractor() {
       ...
     }
   `;
-
+  const sampleResponse = {
+    policyInformation: {
+      policyNumber: "fetch form the file",
+      policyType: "fetch form the file",
+      coverageLimit: 100000,
+      keyPolicyClauses: {
+        "Room Rent Cap": "fetch form the file",
+        "Diet & Supplements": "fetch form the file",
+        "Medications & Consumables": "fetch form the file",
+        Diagnostics: "fetch form the file",
+      },
+      maximumClaimableAmount: 100000,
+    },
+    claimInfo: {
+      totalClaimedAmount: 54000,
+      totalDisallowedAmount: "<amount>",
+      totalPayableAmount: "<amount>",
+      claimBreakdown: [
+        {
+          category:
+            "Per day room rent + nursing and service charges + patients diet",
+          claimed: 2000,
+          disallowed: "<if any>",
+          payable: "<if any>",
+        },
+        {
+          category: "Expected cost of investigation + diagnostic",
+          claimed: 5000,
+          disallowed: "<if any>",
+          payable: "<if any>",
+        },
+        {
+          category: "Medicines + Consumables + Cost of Implants",
+          claimed: 40000,
+          disallowed: "<if any>",
+          payable: "<if any>",
+        },
+      ],
+      disallowedReasons: [
+        {
+          category: "<category name>",
+          reason: "<Policy clause violated>",
+        },
+      ],
+    },
+  };
+  const prompt2 = `I have a health insurance policy document along with a set of claim details submitted by a patient. 
+    Please verify whether the claims comply with the policy coverage and identify any discrepancies 
+    where certain claimed amounts should be disallowed.
+    Analyze the claim details against the policy terms and return the final assessment in the following JSON format:
+    ${JSON.stringify(sampleResponse)}
+      If any amount needs to be disallowed, provide clear reasoning based on policy clauses. 
+      Return only the final JSON output.
+    `;
   const extractData = async () => {
     if (!file) return alert("Please upload a PDF file first.");
     setLoading(true);
@@ -146,6 +205,48 @@ export default function PDFExtractor() {
         console.log(cleanedText);
 
         setExtractedData(JSON.parse(cleanedText));
+      } catch (error) {
+        console.error("Error extracting data:", error);
+        alert("Failed to extract data. Check console for details.");
+      }
+    };
+    const reader2 = new FileReader();
+    reader2.readAsDataURL(policyFile);
+    reader2.onload = async () => {
+      const base64File = reader2.result.split(",")[1];
+
+      const apiKey = "AIzaSyC3VH2C5PbqQwT81QSznSUxjmQzQZPlqZc";
+      // const prompt =
+      //   "Extract the following fields from the medical document: Patient Address 1, Time Of Discharge, Claimed Amount, etc.";
+
+      try {
+        const response = await axios.post(
+          "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" +
+            apiKey,
+          {
+            contents: [
+              {
+                parts: [
+                  { text: prompt2 },
+                  {
+                    inlineData: {
+                      mimeType: "application/pdf",
+                      data: base64File,
+                    },
+                  },
+                ],
+              },
+            ],
+          }
+        );
+
+        const result = response.data.candidates[0]?.content?.parts[0]?.text;
+        console.log("policy", result);
+        const cleanedText = result.replace(/```json|```/g, "").trim();
+
+        console.log(cleanedText);
+
+        setExtractedPolicyData(JSON.parse(cleanedText));
       } catch (error) {
         console.error("Error extracting data:", error);
         alert("Failed to extract data. Check console for details.");
@@ -195,11 +296,32 @@ export default function PDFExtractor() {
             accept="application/pdf"
             onChange={handleFileChange}
             style={{ display: "none" }}
-            id="upload-file"
+            id="upload-file1"
           />
-          <label htmlFor="upload-file">
+          <label htmlFor="upload-file1">
             <Button variant="contained" component="span" color="secondary">
-              Upload PDF
+              Upload Discharge summary and documents PDF
+            </Button>
+          </label>
+        </Box>
+
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          gap={2}
+          mt={3}
+        >
+          <input
+            type="file"
+            accept="application/pdf"
+            onChange={handlePolicyFileChange}
+            style={{ display: "none" }}
+            id="upload-file2"
+          />
+          <label htmlFor="upload-file2">
+            <Button variant="contained" component="span" color="secondary">
+              Upload policy documents PDF
             </Button>
           </label>
         </Box>
@@ -215,7 +337,7 @@ export default function PDFExtractor() {
           {loading ? <CircularProgress size={24} /> : "Extract Data"}
         </Button>
       </Paper>
-      {extractedData && <HealthInsuranceSlides data={extractedData} />}
+      {extractedPolicyData && <HealthInsuranceSlides data={extractedData} policyData={extractedPolicyData} />}
     </>
   );
 }
