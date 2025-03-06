@@ -586,7 +586,7 @@ const HealthInsuranceSlides = (data) => {
                         <div>
                           <span className="text-gray-500 block">Hospital</span>
                           <span className="font-medium">
-                            {claimdata['HospitalName']}
+                            {claimdata["HospitalName"]}
                           </span>
                         </div>
                         <div>
@@ -594,7 +594,8 @@ const HealthInsuranceSlides = (data) => {
                             Admission Period
                           </span>
                           <span className="font-medium">
-                          {claimdata['DateOfAdmission']} - {claimdata['DateOfDischarge']}
+                            {claimdata["DateOfAdmission"]} -{" "}
+                            {claimdata["DateOfDischarge"]}
                           </span>
                         </div>
                       </div>
@@ -610,20 +611,26 @@ const HealthInsuranceSlides = (data) => {
                         <span className="text-gray-600">
                           Total Billed Amount:
                         </span>
-                        <span className="font-medium">{policyData.claimInfo.totalClaimedAmount}</span>
+                        <span className="font-medium">
+                          {
+                            claimdata[
+                              "Sum Total expected cost of hospitalization"
+                            ]
+                          }
+                        </span>
                       </div>
                       <div className="flex justify-between mb-2 pb-2 border-b border-gray-200">
                         <span className="text-gray-600">
                           Non-Claimable Amount:
                         </span>
                         <span className="font-medium text-red-600">
-                        {policyData.claimInfo.totalDisallowedAmount}
+                          {policyData.claimInfo.totalDisallowedAmount}
                         </span>
                       </div>
                       <div className="flex justify-between mb-2 pb-2 border-b border-gray-200">
                         <span className="text-gray-600">Claimable Amount:</span>
                         <span className="font-medium text-green-600">
-                        {policyData.claimInfo.totalPayableAmount}
+                          {policyData.claimInfo.totalPayableAmount}
                         </span>
                       </div>
                       <div className="flex justify-between">
@@ -638,69 +645,36 @@ const HealthInsuranceSlides = (data) => {
                   </div>
                 </div>
 
-                {/* <div className="mb-6">
-                  <h4 className="font-medium text-gray-800 mb-3">
-                    Detailed Reasoning
-                  </h4>
-                  <div className="bg-blue-50 p-4 rounded border border-blue-100 text-blue-800">
-                    <h5 className="font-medium mb-2">
-                      Why ₹27,000 was rejected:
-                    </h5>
-                    <ul className="text-sm space-y-3">
-                      <li className="flex items-start">
-                        <AlertCircle
-                          size={16}
-                          className="text-red-500 mr-2 mt-1 flex-shrink-0"
-                        />
-                        <div>
-                          <p className="font-medium mb-1">
-                            Super Deluxe Room (₹14,000 excess)
-                          </p>
-                          <p className="text-blue-700">
-                            According to Clause 4.2 of the policy, room rent is
-                            capped at ₹2,000 per day. The patient opted for a
-                            Super Deluxe room at ₹6,667 per day, resulting in an
-                            excess charge of ₹14,000 over 3 days that is not
-                            covered per policy terms.
-                          </p>
-                        </div>
-                      </li>
-                      <li className="flex items-start">
-                        <AlertCircle
-                          size={16}
-                          className="text-red-500 mr-2 mt-1 flex-shrink-0"
-                        />
-                        <div>
-                          <p className="font-medium mb-1">
-                            Food and Supplements (₹7,000)
-                          </p>
-                          <p className="text-blue-700">
-                            As per Clause 7.3, food charges (₹1,000) and dietary
-                            supplements (₹6,000) are excluded from coverage.
-                            These items must be covered by the patient as
-                            outlined in the policy document section 7.3.1.
-                          </p>
-                        </div>
-                      </li>
-                      <li className="flex items-start">
-                        <AlertCircle
-                          size={16}
-                          className="text-red-500 mr-2 mt-1 flex-shrink-0"
-                        />
-                        <div>
-                          <p className="font-medium mb-1">
-                            Personal Care Items (₹2,000)
-                          </p>
-                          <p className="text-blue-700">
-                            Personal care items totaling ₹2,000 are not eligible
-                            for coverage as specified in Clause 7.3.2 of the
-                            policy document.
-                          </p>
-                        </div>
-                      </li>
-                    </ul>
+                {policyData.claimInfo.disallowedReasons && (
+                  <div className="mb-6">
+                    <h4 className="font-medium text-gray-800 mb-3">
+                      Detailed Reasoning
+                    </h4>
+                    <div className="bg-blue-50 p-4 rounded border border-blue-100 text-blue-800">
+                      <h5 className="font-medium mb-2">
+                        Why the claim was rejected:
+                      </h5>
+                      <ul className="text-sm space-y-3">
+                        {policyData.claimInfo.disallowedReasons.map(
+                          (item, index) => (
+                            <li key={index} className="flex items-start">
+                              <AlertCircle
+                                size={16}
+                                className="text-red-500 mr-2 mt-1 flex-shrink-0"
+                              />
+                              <div>
+                                <p className="font-medium mb-1">
+                                  {item.category}
+                                </p>
+                                <p className="text-blue-700">{item.reason}</p>
+                              </div>
+                            </li>
+                          )
+                        )}
+                      </ul>
+                    </div>
                   </div>
-                </div> */}
+                )}
 
                 <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
                   <div className="flex items-center">

@@ -110,150 +110,158 @@ export default function PDFExtractor() {
       ...
     }
   `;
-  const sampleResponse = {
-    policyInformation: {
-      policyNumber: "fetch form the file",
-      policyType: "fetch form the file",
-      coverageLimit: 100000,
-      keyPolicyClauses: {
-        "Room Rent Cap": "fetch form the file",
-        "Diet & Supplements": "fetch form the file",
-        "Medications & Consumables": "fetch form the file",
-        Diagnostics: "fetch form the file",
-      },
-      maximumClaimableAmount: 100000,
-    },
-    claimInfo: {
-      totalClaimedAmount: 54000,
-      totalDisallowedAmount: "<amount>",
-      totalPayableAmount: "<amount>",
-      claimBreakdown: [
-        {
-          category:
-            "Per day room rent + nursing and service charges + patients diet",
-          claimed: 2000,
-          disallowed: "<if any>",
-          payable: "<if any>",
-        },
-        {
-          category: "Expected cost of investigation + diagnostic",
-          claimed: 5000,
-          disallowed: "<if any>",
-          payable: "<if any>",
-        },
-        {
-          category: "Medicines + Consumables + Cost of Implants",
-          claimed: 40000,
-          disallowed: "<if any>",
-          payable: "<if any>",
-        },
-      ],
-      disallowedReasons: [
-        {
-          category: "<category name>",
-          reason: "<Policy clause violated>",
-        },
-      ],
-    },
-  };
-  const prompt2 = `I have a health insurance policy document along with a set of claim details submitted by a patient. 
-    Please verify whether the claims comply with the policy coverage and identify any discrepancies 
-    where certain claimed amounts should be disallowed.
-    Analyze the claim details against the policy terms and return the final assessment in the following JSON format:
-    ${JSON.stringify(sampleResponse)}
-      If any amount needs to be disallowed, provide clear reasoning based on policy clauses. 
-      Return only the final JSON output.
-    `;
+
   const extractData = async () => {
     if (!file) return alert("Please upload a PDF file first.");
     setLoading(true);
-
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = async () => {
-      const base64File = reader.result.split(",")[1];
-
-      const apiKey = "AIzaSyC3VH2C5PbqQwT81QSznSUxjmQzQZPlqZc";
-      // const prompt =
-      //   "Extract the following fields from the medical document: Patient Address 1, Time Of Discharge, Claimed Amount, etc.";
-
-      try {
-        const response = await axios.post(
-          "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" +
-            apiKey,
-          {
-            contents: [
-              {
-                parts: [
-                  { text: prompt },
-                  {
-                    inlineData: {
-                      mimeType: "application/pdf",
-                      data: base64File,
-                    },
-                  },
-                ],
-              },
-            ],
-          }
-        );
-
-        const result = response.data.candidates[0]?.content?.parts[0]?.text;
-        console.log(result);
-        const cleanedText = result.replace(/```json|```/g, "").trim();
-
-        console.log(cleanedText);
-
-        setExtractedData(JSON.parse(cleanedText));
-      } catch (error) {
-        console.error("Error extracting data:", error);
-        alert("Failed to extract data. Check console for details.");
-      }
-    };
-    const reader2 = new FileReader();
-    reader2.readAsDataURL(policyFile);
-    reader2.onload = async () => {
-      const base64File = reader2.result.split(",")[1];
+    try {
+      // Read first file
+      const reader = new FileReader();
+      const base64File = await new Promise((resolve, reject) => {
+        reader.onload = () => resolve(reader.result.split(",")[1]);
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(file);
+      });
 
       const apiKey = "AIzaSyC3VH2C5PbqQwT81QSznSUxjmQzQZPlqZc";
-      // const prompt =
-      //   "Extract the following fields from the medical document: Patient Address 1, Time Of Discharge, Claimed Amount, etc.";
 
-      try {
-        const response = await axios.post(
-          "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" +
-            apiKey,
-          {
-            contents: [
-              {
-                parts: [
-                  { text: prompt2 },
-                  {
-                    inlineData: {
-                      mimeType: "application/pdf",
-                      data: base64File,
-                    },
+      // Extract data from the first file
+      const response1 = await axios.post(
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" +
+          apiKey,
+        {
+          contents: [
+            {
+              parts: [
+                { text: prompt },
+                {
+                  inlineData: {
+                    mimeType: "application/pdf",
+                    data: base64File,
                   },
+                },
+              ],
+            },
+          ],
+        }
+      );
+
+      const result1 = response1.data.candidates[0]?.content?.parts[0]?.text;
+      console.log(result1);
+      const cleanedText1 = result1.replace(/```json|```/g, "").trim();
+      const claim = JSON.parse(cleanedText1);
+      setExtractedData(claim);
+
+      const sampleResponse = {
+        policyInformation: {
+          policyNumber: "fetch form the file",
+          policyType: "fetch form the file",
+          coverageLimit: 100000,
+          keyPolicyClauses: {
+            "Room Rent Cap": "fetch form the file",
+            "Diet & Supplements": "fetch form the file",
+            "Medications & Consumables": "fetch form the file",
+            Diagnostics: "fetch form the file",
+          },
+          maximumClaimableAmount: 100000,
+        },
+        claimInfo: {
+          totalClaimedAmount:
+            claim["Sum Total expected cost of hospitalization "],
+          totalDisallowedAmount: "<amount>",
+          totalPayableAmount: "<amount>",
+          claimBreakdown: [
+            {
+              category:
+                "Per day room rent + nursing and service charges + patients diet",
+              claimed: claim["Per day room rent + nursing and service charges+ patients diet"],
+              disallowed: "<if any>",
+              payable: "<if any>",
+            },
+            {
+              category: "Expected cost of investigation + diagnostic",
+              claimed: claim["Medicines + Consumables + Cost of Implants (if applicable please specify)"],
+              disallowed: "<if any>",
+              payable: "<if any>",
+            },
+            {
+              category: "Medicines + Consumables + Cost of Implants",
+              claimed: claim["Medicines + Consumables + Cost of Implants"],
+              disallowed: "<if any>",
+              payable: "<if any>",
+            },
+            {
+              category:
+                "Professional fes Surgeon + Anesthetist Fees + consultation Charges",
+              claimed:
+                claim[
+                  "Professional fes Surgeon + Anesthetist Fees + consultation Charges"
                 ],
-              },
-            ],
-          }
-        );
+              disallowed: "<if any>",
+              payable: "<if any>",
+            },
+          ],
+          disallowedReasons: [
+            {
+              category: "<category name>",
+              reason: "<Policy clause violated>",
+            },
+          ],
+        },
+      };
+      const prompt2 = `I have a health insurance policy document along with a set of claim details submitted by a patient. 
+        Please verify whether the claims comply with the policy coverage and identify any discrepancies 
+        where certain claimed amounts should be disallowed.
+        Date of Addmision:  ${claim['DateOfAdmission']} and  Date of Discharge:  ${claim['DateOfDischarge']} 
+        based on the number of day the patient stayed check for room rent, if 1% of total claimable amount is less than Per day room rent + nursing and service charges+ patients diet
+        disalllow the rest amount.
+        
+        Analyze the claim details against the policy terms and return the final assessment in the following JSON format:
+        ${JSON.stringify(sampleResponse)}
+          If any amount needs to be disallowed, provide clear reasoning based on policy clauses. 
+          Return only the final JSON output.
+        `;
+      console.log("prompt 2:", prompt2);
 
-        const result = response.data.candidates[0]?.content?.parts[0]?.text;
-        console.log("policy", result);
-        const cleanedText = result.replace(/```json|```/g, "").trim();
+      // Read second file
+      const reader2 = new FileReader();
+      const base64PolicyFile = await new Promise((resolve, reject) => {
+        reader2.onload = () => resolve(reader2.result.split(",")[1]);
+        reader2.onerror = (error) => reject(error);
+        reader2.readAsDataURL(policyFile);
+      });
 
-        console.log(cleanedText);
+      // Extract data from the second file
+      const response2 = await axios.post(
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" +
+          apiKey,
+        {
+          contents: [
+            {
+              parts: [
+                { text: prompt2 },
+                {
+                  inlineData: {
+                    mimeType: "application/pdf",
+                    data: base64PolicyFile,
+                  },
+                },
+              ],
+            },
+          ],
+        }
+      );
 
-        setExtractedPolicyData(JSON.parse(cleanedText));
-      } catch (error) {
-        console.error("Error extracting data:", error);
-        alert("Failed to extract data. Check console for details.");
-      } finally {
-        setLoading(false);
-      }
-    };
+      const result2 = response2.data.candidates[0]?.content?.parts[0]?.text;
+      console.log("policy", result2);
+      const cleanedText2 = result2.replace(/```json|```/g, "").trim();
+      setExtractedPolicyData(JSON.parse(cleanedText2));
+    } catch (error) {
+      console.error("Error extracting data:", error);
+      alert("Failed to extract data. Check console for details.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -337,7 +345,12 @@ export default function PDFExtractor() {
           {loading ? <CircularProgress size={24} /> : "Extract Data"}
         </Button>
       </Paper>
-      {extractedPolicyData && <HealthInsuranceSlides data={extractedData} policyData={extractedPolicyData} />}
+      {extractedPolicyData && (
+        <HealthInsuranceSlides
+          data={extractedData}
+          policyData={extractedPolicyData}
+        />
+      )}
     </>
   );
 }
